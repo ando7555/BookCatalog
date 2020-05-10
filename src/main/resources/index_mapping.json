@@ -1,0 +1,62 @@
+{ "settings": {
+  "analysis": {
+    "filter": {
+      "autocomplete_filter": {
+        "type": "edge_ngram",
+        "min_gram": 3,
+        "max_gram": 20
+      }
+    },
+    "analyzer": {
+      "autocomplete_search": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase"
+        ]
+      },
+      "autocomplete_index": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase",
+          "autocomplete_filter"
+        ]
+      }
+    }
+  }
+},
+  "mappings": {
+    "books": {
+      "_source" : {
+        "enabled": true
+      },
+      "properties": {
+        "title": { "type": "text" ,
+          "analyzer": "autocomplete_index",
+          "search_analyzer": "autocomplete_search"
+        },
+        "categories" : {
+          "type": "nested",
+          "properties" : {
+            "name": { "type": "text" }
+          }
+        },
+        "publisher": { "type": "keyword" },
+        "description": { "type": "text" },
+        "published_date": { "type": "date" },
+        "isbn": { "type": "keyword" },
+        "rating": { "type": "byte" }
+      }
+    },
+    "authors": {
+      "properties": {
+        "first_name": { "type": "keyword" },
+        "last_name": { "type": "keyword" }
+      },
+      "_parent": {
+        "type": "books"
+      }
+    }
+  }
+}
